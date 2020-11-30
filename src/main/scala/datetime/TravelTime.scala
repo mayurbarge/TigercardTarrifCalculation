@@ -1,9 +1,9 @@
 package datetime
 
-
 import java.time.{DayOfWeek, LocalTime}
 
-import domain.{TravelZones, ZoneI, ZoneID, ZoneRates}
+import domain.{TravelZones, ZoneI, ZoneID}
+
 case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones) {
   import TravelTime._
   import travelZones._
@@ -14,14 +14,14 @@ case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones)
   def isPeakHour() = {
     val skipOffHours = !((fromZone != ZoneI) && (toZone == ZoneI))
     val weekEndPeakHour = {
-      val isWeekendMorningPeak = time.isAfter(nine) && time.isBefore(eleven)
-      val isWeekendEveningPeak = skipOffHours && time.isAfter(eighteen) && time.isBefore(twentyTwo)
+      val isWeekendMorningPeak = time.isAfter(eightFiftyNine) && time.isBefore(eleven)
+      val isWeekendEveningPeak = skipOffHours && time.isAfter(seventeenFiftyNine) && time.isBefore(twentyTwo)
       isWeekend && (isWeekendMorningPeak || isWeekendEveningPeak)
     }
 
     val weekDayPeakHour = {
-      val isWeekdayMorningPeak = time.isAfter(seven) && time.isBefore(tenThirty)
-      val isWeekdayEveningPeak = skipOffHours && time.isAfter(seventeen) && time.isBefore(twenty)
+      val isWeekdayMorningPeak = time.isAfter(sixFifyNine) && time.isBefore(tenThirty)
+      val isWeekdayEveningPeak = skipOffHours && time.isAfter(sixteenFiftyNine) && time.isBefore(twenty)
       isWeekday && (isWeekdayMorningPeak || isWeekdayEveningPeak)
     }
 
@@ -44,12 +44,12 @@ case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones)
 }
 
 object TravelTime {
-  val seven = LocalTime.of(7,0)
-  val nine = LocalTime.of(9,0)
+  val sixFifyNine = LocalTime.of(6,59)
+  val eightFiftyNine = LocalTime.of(8,59)
   val tenThirty = LocalTime.of(10,30)
   val eleven = LocalTime.of(11,0)
-  val seventeen = LocalTime.of(17,0)
-  val eighteen = LocalTime.of(18,0)
+  val sixteenFiftyNine = LocalTime.of(16,59)
+  val seventeenFiftyNine = LocalTime.of(17,59)
   val twenty = LocalTime.of(20,0)
   val twentyTwo = LocalTime.of(22,0)
 
@@ -62,7 +62,6 @@ object TravelTime {
         Some(new TravelTime(getDay(day), LocalTime.of(h.head,h.last), TravelZones(ZoneID(from.toInt), ZoneID(to.toInt))))
       }
       case _=> {
-       // println("@@@@@@@@@@@@")
         None
       }
     }
