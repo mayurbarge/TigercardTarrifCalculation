@@ -11,7 +11,7 @@ import scala.util.Try
 object Main extends App {
   val travelTimes =
   for {
-    inputLines <- Reader.read("resources/input.txt")
+    inputLines <- Reader.read("resources/input2.txt")
     input <- inputLines.toList
   } yield {
     TravelTime(input.split(" ").toList).get
@@ -53,6 +53,8 @@ object Main extends App {
     state
   }
 
-  CardState.changeWeeklyState(zz)
+  val p = CardState.changeWeeklyState(zz)
+
+  println(p.run(CardState.monoid.zero)._1)
 
 }

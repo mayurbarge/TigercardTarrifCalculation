@@ -13,12 +13,15 @@ object CardState {
       _ <- State.modify[CardState](oldCardState => {
         (fares zip rides).foldLeft(oldCardState)((acc, pair) => {
           val (fare, ride) = pair
-          //println(fare + " " + ride.travelZones.fromZone+ " "+  ride.travelZones.toZone +  acc.countMap)
-          //println(fare + " " + ride.travelZones.fromZone+ " "+  ride.travelZones.toZone +  acc.fareMap)
-          //println("------------------------")
+          /*println(fare + " " + ride.travelZones.fromZone+ " "+  ride.travelZones.toZone +  acc.countMap)
+          println(fare + " " + ride.travelZones.fromZone+ " "+  ride.travelZones.toZone +  acc.fareMap)
+          println("------------------------")*/
           val zone = ride.travelZones
           val cap = ride.travelZones.zoneRates.dailyCap
-          if ( (acc.countMap.getOrElse(zone, 0) >= 3) && (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare) < cap)
+          /*println(cap)
+          println((cap - (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare)))
+          println("%%%%%%%%%%%%%%%%%")*/
+          if ( (acc.countMap.getOrElse(zone, 0) == 2) && (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare) < cap)
             acc |+| CardState(Map(zone -> 1), Map(zone -> (cap - (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare))))
           else
             acc |+| CardState(Map(zone -> 1), Map(zone ->  BigDecimal(fare)))
@@ -31,7 +34,17 @@ object CardState {
   def changeWeeklyState(cardStates: List[CardState]): State[CardState, CardState] = {
     for {
       i <- State.init[CardState]
-      _ <- State.modify[CardState](oldCardState => oldCardState |+| cardStates.reduce(_|+|_))
+      _ <- State.modify[CardState](oldCardState => {
+        val withoutCaps: CardState = oldCardState |+| cardStates.reduce(_|+|_)
+
+        val cappedFares = withoutCaps.fareMap.foldLeft(Map.empty[TravelZones, BigDecimal])((acc, e)=>{
+         val (zone, fare) = e
+         if(zone.zoneRates.weeklyCap < fare) {
+           acc + (zone -> zone.zoneRates.weeklyCap)
+         } else acc + (zone -> fare)
+       })
+        withoutCaps.copy(fareMap = cappedFares)
+      })
       modified <- State.get[CardState]
     } yield modified
   }
