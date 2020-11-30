@@ -1,0 +1,9 @@
+journey may begin in peak hour end in non-peak, similarly it may begin in non-peak and end in peak
+what rates should be applied
+
+week end logic is undefined, what if person travels on Week1 Monday, and directly on Week2 Tuesday
+Assuptions
+card can be recharged and at each trip it is debited
+what about amount, currencies
+Timezones are not provided
+logic for first three rides, is it irrespective of any zone to any or once interzone/intrazone three rides are done
