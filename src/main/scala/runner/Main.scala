@@ -1,27 +1,15 @@
 package runner
 
-import java.time.DayOfWeek
-
 import datetime.TravelTime
 import domain.CardState
 import farecalculation.FareCalculator
 import io.Reader
-import runner.Main.weeklyTravels
 import scalaz.State
 
 import scala.util.Try
 
 object Main extends App {
-  val travelTimes = readTravels
-  val weeklyTravels = splitByWeeks
-  val dailyFares = calculateDailyFares
-  val dailyStates = buildDailyStates
-  val weeklyStates = buildWeeklyStates
-  val result = CardState.changeWeeklyState(weeklyStates)
-
-  println(result.run(CardState.monoid.zero)._1.fareMap.values.sum)
-
-  private def readTravels = {
+  val travelTimes = {
     for {
       inputLines <- Reader.read("resources/input2.txt")
       input <- inputLines.toList
@@ -30,7 +18,7 @@ object Main extends App {
     }
   }
 
-  private def splitByWeeks = {
+  val totalRides: List[List[TravelTime]] = {
     travelTimes.foldLeft(List(List.empty[TravelTime]))((acc, trip) => {
       if (Try {
         acc.head.head.dayWeight
@@ -42,33 +30,17 @@ object Main extends App {
     })
   }
 
-  private def calculateDailyFares = {
+  val dailyStates = {
     for {
-      trip <- travelTimes
-    } yield FareCalculator.calculateDailyFare(trip)
-  }
-
-  private def buildDailyStates = {
-    for {
-      weeklyTravels <- weeklyTravels
+      allRidesInAWeek <- totalRides
+      dailyRides = allRidesInAWeek.groupBy(_.day).values.toList
     } yield {
-      val fares =
-        for {
-          trip <- weeklyTravels
-        } yield {
-          FareCalculator.calculateDailyFare(trip)
-        }
-      CardState.changeDailyState(fares, weeklyTravels)
+      dailyRides.map(CardState.changeDailyState).map(_.run(CardState.monoid.zero)._1)
     }
   }
 
-  private def buildWeeklyStates = {
-    for {
-      dailyState <- dailyStates
-    } yield {
-      val (state, _) = dailyState.run(CardState.monoid.zero)
-      state
-    }
-  }
+  val weeklyStates = dailyStates.map(CardState.changeWeeklyState)
+  val result = weeklyStates.map(_.run(CardState.monoid.zero)._1).map(_.fareMap.values.sum).sum
+  println(result)
 
 }
