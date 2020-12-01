@@ -11,14 +11,15 @@ object CardState {
     for {
       i <- State.init[CardState]
       _ <- State.modify[CardState](oldCardState => {
+        val cap = rides.map(_.travelZones.zoneRates.dailyCap).max
         (fares zip rides).foldLeft(oldCardState)((acc, pair) => {
           val (fare, ride) = pair
           val zone = ride.travelZones
-          val cap = ride.travelZones.zoneRates.dailyCap
-          if ( (acc.countMap.getOrElse(zone, 0) == 2) && (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare) < cap)
-            acc |+| CardState(Map(zone -> 1), Map(zone -> (cap - (acc.fareMap.getOrElse(zone, BigDecimal(0)) + fare))))
-          else
+          if (acc.fareMap.values.sum + fare < cap)
             acc |+| CardState(Map(zone -> 1), Map(zone ->  BigDecimal(fare)))
+          else
+            acc |+| CardState(Map(zone -> 1), Map(zone -> (cap - acc.fareMap.values.sum)))
+
         })
       })
       modified <- State.get[CardState]
