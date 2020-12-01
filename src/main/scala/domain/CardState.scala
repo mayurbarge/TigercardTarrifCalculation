@@ -32,11 +32,12 @@ object CardState {
       i <- State.init[CardState]
       _ <- State.modify[CardState](oldCardState => {
         val withoutCaps: CardState = oldCardState |+| cardStates.reduce(_|+|_)
+        val cap = cardStates.map(_.countMap.keySet.map(_.zoneRates.weeklyCap).max).max
 
         val cappedFares = withoutCaps.fareMap.foldLeft(Map.empty[TravelZones, BigDecimal])((acc, e)=>{
          val (zone, fare) = e
-         if(zone.zoneRates.weeklyCap < fare) {
-           acc + (zone -> zone.zoneRates.weeklyCap)
+         if(cap < fare) {
+           acc + (zone -> cap)
          } else acc + (zone -> fare)
        })
         withoutCaps.copy(fareMap = cappedFares)
