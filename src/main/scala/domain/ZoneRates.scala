@@ -1,5 +1,11 @@
 package domain
 
+import scalaz.Validation
+import scalaz._
+import Scalaz._
+import scalaz.syntax.ApplicativeBuilder
+import validations.Validator._
+
 trait ZoneRates {
   val peakHour: Double
   val offPeakHour: Double

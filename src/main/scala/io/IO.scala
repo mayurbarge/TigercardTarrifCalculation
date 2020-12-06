@@ -15,7 +15,7 @@ object Reader extends App{
     for {
       inputLine <- io.unsafePerformIO.toList
     } yield {
-      inputLine.split(",")
+      inputLine.split("\n")
     }
   }
 }

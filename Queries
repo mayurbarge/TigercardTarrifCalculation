@@ -7,3 +7,11 @@ card can be recharged and at each trip it is debited
 what about amount, currencies
 Timezones are not provided
 logic for first three rides, is it irrespective of any zone to any or once interzone/intrazone three rides are done
+
+    Regarding 5th point, the logic says caps are applicable after the first three rides, though rides are independent of zones or not is not clear.
+    As can be seen from example1
+    Monday 19:00 1 2 calculated fare 5------- Here from zone 1 to 2 this is the first ride and still capping is applicable.
+    I just need some clarification around that.
+
+There is no logic that cap is applicable after the first three rides only. The cap that is applicable for a day is based on the farthest journey in a day. For example, if a few journeys are within zone 1 and a single journey is between zone 1 & 2 or vice versa, then the daily cap applicable will be the one for zone 1 - 2
+

@@ -2,7 +2,11 @@ package datetime
 
 import java.time.{DayOfWeek, LocalTime}
 
+import scalaz.Scalaz._
+import scalaz.{ValidationNel, _}
 import domain.{TravelZones, ZoneI, ZoneID}
+import validations.Validator
+import validations.Validator.Result
 
 case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones) {
   import TravelTime._
@@ -55,14 +59,11 @@ object TravelTime {
 
   def getDay(value: String) = DayOfWeek.valueOf(value.toUpperCase)
 
-  def apply(input: List[String]): Option[TravelTime] = {
+  def apply(input: List[String]): Result[TravelTime] = {
     input match {
-      case List(day, time, from, to) => {
-        val h = time.split(":").map(_.toInt)
-        Some(new TravelTime(getDay(day), LocalTime.of(h.head,h.last), TravelZones(ZoneID(from.toInt), ZoneID(to.toInt))))
-      }
+      case List(day, time, from, to) => Validator.validate(day,time,from, to)
       case _=> {
-        None
+        "Invalid input line".failureNel
       }
     }
   }
