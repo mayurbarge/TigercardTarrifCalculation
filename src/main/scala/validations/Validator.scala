@@ -20,20 +20,19 @@ object Validator {
   }
 
   def validateLocalTime(time: String): Result[LocalTime] = {
-    val h = time.split(":").map(_.toInt)
-    Try {LocalTime.of(h.head,h.last)}.toOption match {
+    Try {
+      val h = time.split(":").map(_.toInt)
+      LocalTime.of(h.head,h.last)
+    }.toOption match {
       case Some(value) => value.success
       case None => "Day invalid".failureNel
     }
   }
 
   def validateZoneID(id: String): Result[ZoneID] = {
-    val zondID = Try {
-      id.toInt
-    }
-    zondID.toOption match {
-      case Some(value) if value > 0 && value <= 3 => ZoneID(value).success
-      case None => "ZoneID invalid or not supported".failureNel
+    Try {id.toInt}.toOption match {
+      case Some(value) if value > 0 && value < 3 => ZoneID(value).success
+      case  _=> "ZoneID invalid or not supported".failureNel
     }
   }
 

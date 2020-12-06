@@ -27,7 +27,6 @@ class TravelTimeTest extends FunSpec with Matchers {
         it("should check for weekend evening peak hours") {
           weekEndEveningPeak.isPeakHour() shouldBe true
         }
-
       }
     }
     describe("Off-Peak Hours") {
@@ -90,6 +89,15 @@ class TravelTimeTest extends FunSpec with Matchers {
     }
     it("should give weight 7 to Sunday") {
       TravelTime(DayOfWeek.SUNDAY, LocalTime.of(17, 58), TravelZones(ZoneI, ZoneI)).dayWeight shouldBe 7
+    }
+  }
+
+  describe("Validation") {
+    it("should validate input for correct parameters") {
+      TravelTime.apply(List("sunday","10:30","1","2")).isSuccess shouldBe true
+    }
+    it("should fail when invalid input is given") {
+      TravelTime.apply(List("sunday","10:30","1","2")).isSuccess shouldBe true
     }
   }
 }
