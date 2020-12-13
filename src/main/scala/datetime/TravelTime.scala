@@ -34,17 +34,7 @@ case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones)
 
   def isOffPeakHour() = !isPeakHour()
 
-  def dayWeight = {
-    day match {
-      case DayOfWeek.MONDAY => 1
-      case DayOfWeek.TUESDAY => 2
-      case DayOfWeek.WEDNESDAY => 3
-      case DayOfWeek.THURSDAY => 4
-      case DayOfWeek.FRIDAY => 5
-      case DayOfWeek.SATURDAY => 6
-      case DayOfWeek.SUNDAY => 7
-    }
-  }
+  def dayWeight = day.getValue
 }
 
 object TravelTime {

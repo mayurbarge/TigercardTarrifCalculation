@@ -1,15 +1,11 @@
 package runner
 
 import datetime.TravelTime
-import domain.CardState
-import farecalculation.FareCalculator
+import domain.{CardStateCalculationService, WeeklyTravels}
 import io.{Reader, Writer}
-import scalaz._
 import scalaz.Scalaz._
-import validations.Validator
+import scalaz._
 import validations.Validator.Result
-
-import scala.util.Try
 
 object Main extends App {
   val validatedTravelTimes = {
@@ -21,36 +17,10 @@ object Main extends App {
     }
   }.sequence[Result, TravelTime]
 
-
-  val totalRides = (travelTimes: List[TravelTime]) => {
-    travelTimes.foldLeft(List(List.empty[TravelTime]))((acc, trip) => {
-      if (Try {
-        acc.head.head.dayWeight
-      }.toOption.getOrElse(0) > trip.dayWeight) {
-        List(trip) :: acc
-      } else {
-        (trip :: acc.head) :: acc.tail
-      }
-    })
-  }
-
-  val dailyStates = (totalRides: List[List[TravelTime]]) => {
-    for {
-      allRidesInAWeek <- totalRides
-      dailyRides = allRidesInAWeek.groupBy(_.day).values.toList
-    } yield {
-      dailyRides.map(CardState.changeDailyState).map(_.run(CardState.monoid.zero)._1)
-    }
-  }
-
-  val weeklyStates = (dailyStates: List[List[CardState]]) => dailyStates.map(CardState.changeWeeklyState)
-  val totalFare = (weeklyStates: List[State[CardState, CardState]]) => weeklyStates.map(_.run(CardState.monoid.zero)._1).map(_.fareMap.values.sum).sum
-
-
   val result = for {
     travelTimes <- validatedTravelTimes
   } yield {
-    (totalRides andThen dailyStates andThen weeklyStates andThen totalFare)(travelTimes)
+    (WeeklyTravels.splitByWeek andThen CardStateCalculationService.dailyStates andThen CardStateCalculationService.weeklyStates andThen CardStateCalculationService.totalFare)(travelTimes)
   }
 
   result match {
