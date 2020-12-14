@@ -15,16 +15,16 @@ case class TravelTime(day: DayOfWeek, time: LocalTime, travelZones: TravelZones)
   val isWeekday = !isWeekend
 
   def isPeakHour() = {
-    val skipOffHours = !((fromZone != ZoneI) && (toZone == ZoneI))
+    val peakTravelZone  = (fromZone == ZoneI) && (toZone == ZoneI)
     val weekEndPeakHour = {
       val isWeekendMorningPeak = time.isAfter(eightFiftyNine) && time.isBefore(eleven)
-      val isWeekendEveningPeak = skipOffHours && time.isAfter(seventeenFiftyNine) && time.isBefore(twentyTwo)
+      val isWeekendEveningPeak = peakTravelZone && time.isAfter(seventeenFiftyNine) && time.isBefore(twentyTwo)
       isWeekend && (isWeekendMorningPeak || isWeekendEveningPeak)
     }
 
     val weekDayPeakHour = {
       val isWeekdayMorningPeak = time.isAfter(sixFifyNine) && time.isBefore(tenThirty)
-      val isWeekdayEveningPeak = skipOffHours && time.isAfter(sixteenFiftyNine) && time.isBefore(twenty)
+      val isWeekdayEveningPeak = peakTravelZone && time.isAfter(sixteenFiftyNine) && time.isBefore(twenty)
       isWeekday && (isWeekdayMorningPeak || isWeekdayEveningPeak)
     }
 

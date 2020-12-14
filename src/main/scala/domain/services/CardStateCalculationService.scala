@@ -2,7 +2,8 @@ package domain.services
 
 import datetime.TravelTime
 import domain.model.{CardState, WeeklyTravels}
-import scalaz.State
+import scalaz.{Kleisli, State}
+import scalaz.Scalaz._, scalaz._
 
 object CardStateCalculationService {
   val dailyStates = (allTravels: List[WeeklyTravels]) => {

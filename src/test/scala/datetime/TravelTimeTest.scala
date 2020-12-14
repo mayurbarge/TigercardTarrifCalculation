@@ -9,23 +9,42 @@ class TravelTimeTest extends FunSpec with Matchers {
   describe("TravelTime") {
     describe("Peak Hours") {
       describe("Weekday") {
-        val weekDayMorningPeak = TravelTime(DayOfWeek.MONDAY, LocalTime.of(7, 0), TravelZones(ZoneI, ZoneI))
-        val weekDayEveningPeak = TravelTime(DayOfWeek.MONDAY, LocalTime.of(19, 0), TravelZones(ZoneI, ZoneI))
+        val weekDayMorningPeak1 = TravelTime(DayOfWeek.MONDAY, LocalTime.of(7, 0), TravelZones(ZoneI, ZoneI))
+        val weekDayMorningPeak2 = TravelTime(DayOfWeek.MONDAY, LocalTime.of(10, 29), TravelZones(ZoneI, ZoneI))
+        val weekDayMorningNonPeak = TravelTime(DayOfWeek.MONDAY, LocalTime.of(10, 30), TravelZones(ZoneI, ZoneI))
         it("should check for weekday morning peak hours") {
-          weekDayMorningPeak.isPeakHour() shouldBe true
+          weekDayMorningPeak1.isPeakHour() shouldBe true
+          weekDayMorningPeak2.isPeakHour() shouldBe true
+          weekDayMorningNonPeak.isPeakHour() shouldBe false
         }
+        val weekDayEveningPeak1 = TravelTime(DayOfWeek.MONDAY, LocalTime.of(17, 0), TravelZones(ZoneI, ZoneI))
+        val weekDayEveningPeak2 = TravelTime(DayOfWeek.MONDAY, LocalTime.of(19, 59), TravelZones(ZoneI, ZoneI))
+        val weekDayEveningNonPeak = TravelTime(DayOfWeek.MONDAY, LocalTime.of(20, 0), TravelZones(ZoneI, ZoneI))
         it("should check for weekday evening peak hours") {
-          weekDayEveningPeak.isPeakHour() shouldBe true
+          weekDayEveningPeak1.isPeakHour() shouldBe true
+          weekDayEveningPeak2.isPeakHour() shouldBe true
+          weekDayEveningNonPeak.isPeakHour() shouldBe false
         }
       }
       describe("Weekend") {
-        val weekEndMorningPeak = TravelTime(DayOfWeek.SATURDAY, LocalTime.of(9, 0), TravelZones(ZoneI, ZoneI))
-        val weekEndEveningPeak = TravelTime(DayOfWeek.SUNDAY, LocalTime.of(18, 0), TravelZones(ZoneI, ZoneI))
+        val weekEndMorningPeak1 = TravelTime(DayOfWeek.SATURDAY, LocalTime.of(9, 0), TravelZones(ZoneI, ZoneI))
+        val weekEndMorningPeak2 = TravelTime(DayOfWeek.SATURDAY, LocalTime.of(10, 59), TravelZones(ZoneI, ZoneI))
+        val weekEndMorningNonPeak = TravelTime(DayOfWeek.SATURDAY, LocalTime.of(11, 0), TravelZones(ZoneI, ZoneI))
         it("should check for weekend morning peak hours") {
-          weekEndMorningPeak.isPeakHour() shouldBe true
+          weekEndMorningPeak1.isPeakHour() shouldBe true
+          weekEndMorningPeak2.isPeakHour() shouldBe true
+          weekEndMorningNonPeak.isPeakHour() shouldBe false
         }
+        val weekEndEveningPeak1 = TravelTime(DayOfWeek.SUNDAY, LocalTime.of(18, 0), TravelZones(ZoneI, ZoneI))
+        val weekEndEveningPeak2 = TravelTime(DayOfWeek.SUNDAY, LocalTime.of(21, 59), TravelZones(ZoneI, ZoneI))
+        val weekEndEveningPeak3 = TravelTime(DayOfWeek.SUNDAY, LocalTime.of(21, 59), TravelZones(ZoneI, ZoneI))
+        val weekEndEveningNonPeak = TravelTime(DayOfWeek.SUNDAY, LocalTime.of(21, 59), TravelZones(ZoneII, ZoneI))
+
         it("should check for weekend evening peak hours") {
-          weekEndEveningPeak.isPeakHour() shouldBe true
+          weekEndEveningPeak1.isPeakHour() shouldBe true
+          weekEndEveningPeak2.isPeakHour() shouldBe true
+          weekEndEveningPeak3.isPeakHour() shouldBe true
+          weekEndEveningNonPeak.isPeakHour() shouldBe false
         }
       }
     }
