@@ -1,4 +1,4 @@
-package domain
+package domain.model
 
 trait ZoneID
 case object ZoneI extends ZoneID

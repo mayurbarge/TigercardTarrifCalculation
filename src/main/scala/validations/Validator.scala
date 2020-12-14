@@ -3,7 +3,7 @@ package validations
 import java.time.{DayOfWeek, LocalTime}
 
 import datetime.TravelTime
-import domain.{TravelZones, ZoneID}
+import domain.model.{TravelZones, ZoneID}
 import scalaz.Scalaz._
 import scalaz.{ValidationNel, _}
 

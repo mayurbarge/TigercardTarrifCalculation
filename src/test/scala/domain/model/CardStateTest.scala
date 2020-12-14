@@ -1,9 +1,9 @@
-package domain
+package domain.model
 
 import java.time.{DayOfWeek, LocalTime}
 
 import datetime.TravelTime
-import org.scalatest.{FunSpec, FunSuite, Matchers}
+import org.scalatest.{FunSpec, Matchers}
 
 class CardStateTest extends FunSpec with Matchers {
   describe("CardState") {

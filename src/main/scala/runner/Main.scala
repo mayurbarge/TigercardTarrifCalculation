@@ -1,7 +1,7 @@
 package runner
 
 import datetime.TravelTime
-import domain.{CardStateCalculationService, WeeklyTravels}
+import domain.services.CardStateCalculationService
 import io.{Reader, Writer}
 import scalaz.Scalaz._
 import scalaz._
@@ -20,7 +20,7 @@ object Main extends App {
   val result = for {
     travelTimes <- validatedTravelTimes
   } yield {
-    (WeeklyTravels.splitByWeek andThen CardStateCalculationService.dailyStates andThen CardStateCalculationService.weeklyStates andThen CardStateCalculationService.totalFare)(travelTimes)
+    CardStateCalculationService.run(travelTimes)
   }
 
   result match {

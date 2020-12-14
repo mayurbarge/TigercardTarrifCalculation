@@ -1,11 +1,11 @@
-package domain
+package domain.services
+
+import java.time.DayOfWeek._
+import java.time.{DayOfWeek, LocalTime}
 
 import datetime.TravelTime
-import org.scalatest.{FunSpec, FunSuite, Matchers}
-import java.time.DayOfWeek._
-import java.time.{LocalDateTime, LocalTime}
-
-import scalaz.State
+import domain.model._
+import org.scalatest.{FunSpec, Matchers}
 
 class CardStateCalculationServiceTest extends  FunSpec with Matchers {
   describe("Card State Calculation Service") {
@@ -98,5 +98,22 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
           result should contain theSameElementsAs expectedStates
       }
     }
+  }
+
+  it("should calculate total fare for the journyes") {
+    val travelZones = TravelZones(ZoneI, ZoneI, ZoneIToZoneI)
+    val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 4), Map(travelZones -> 100.0))))
+    val result  = CardStateCalculationService.weeklyStates(dailyTravelStates)
+    CardStateCalculationService.totalFare(result) should be (500.0)
+  }
+
+  it("should calculate total fare by running the states in the pipeline") {
+    val travels = List(TravelTime(DayOfWeek.MONDAY, LocalTime.of(10, 20), TravelZones(ZoneII, ZoneI)),
+      TravelTime(DayOfWeek.MONDAY, LocalTime.of(10, 45), TravelZones(ZoneI, ZoneI)),
+      TravelTime(DayOfWeek.MONDAY, LocalTime.of(16, 15), TravelZones(ZoneI, ZoneI)),
+      TravelTime(DayOfWeek.MONDAY, LocalTime.of(18, 15), TravelZones(ZoneI, ZoneI)),
+      TravelTime(DayOfWeek.MONDAY, LocalTime.of(19, 0), TravelZones(ZoneI, ZoneII))
+    )
+    CardStateCalculationService.run(travels) should be (120.0)
   }
 }

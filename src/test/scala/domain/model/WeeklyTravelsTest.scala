@@ -1,12 +1,11 @@
-package domain
+package domain.model
 
 import java.time.{DayOfWeek, LocalTime}
 
-import org.scalatest.{FunSpec, FunSuite, Matchers}
-import scalaz._
-import Scalaz._
 import datetime.TravelTime
-import scalaz.{Monoid, Semigroup}
+import org.scalatest.{FunSpec, Matchers}
+import scalaz.Scalaz._
+import scalaz._
 
 
 class WeeklyTravelsTest extends FunSpec with Matchers {

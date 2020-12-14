@@ -1,8 +1,8 @@
-package farecalculation
+package domain.services
 
 import datetime.TravelTime
 
-object FareCalculator {
+object FareCalculationService {
   def calculateDailyFare(travelTime: TravelTime) = {
     val zoneRates = travelTime.travelZones.zoneRates
     travelTime.isPeakHour match {

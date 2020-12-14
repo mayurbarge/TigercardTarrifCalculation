@@ -1,6 +1,6 @@
-package domain
+package domain.model
 
-import org.scalatest.{FunSpec, FunSuite, Matchers}
+import org.scalatest.{FunSpec, Matchers}
 
 class TravelZonesTest extends FunSpec with Matchers {
   describe("TravelZones") {

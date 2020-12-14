@@ -1,9 +1,8 @@
-package domain
+package domain.model
 
 import datetime.TravelTime
-import farecalculation.FareCalculator
+import domain.services.FareCalculationService
 import scalaz.Scalaz._
-import scalaz.syntax._
 import scalaz.{Monoid, State}
 
 case class CardState(countMap: Map[TravelZones,  Int], fareMap: Map[TravelZones,  BigDecimal])
@@ -15,7 +14,7 @@ object CardState {
         val cap = rides.map(_.travelZones.zoneRates.dailyCap).max
         rides.foldLeft(oldCardState)((acc, ride) => {
           val zone = ride.travelZones
-          val fare = FareCalculator.calculateDailyFare(ride)
+          val fare = FareCalculationService.calculateDailyFare(ride)
           if (acc.fareMap.values.sum + fare < cap)
             acc |+| CardState(Map(zone -> 1), Map(zone ->  BigDecimal(fare)))
           else

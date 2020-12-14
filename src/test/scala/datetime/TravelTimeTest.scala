@@ -2,8 +2,8 @@ package datetime
 
 import java.time.{DayOfWeek, LocalTime}
 
-import domain.{TravelZones, ZoneI, ZoneII}
-import org.scalatest.{FunSpec, FunSuite, Matchers}
+import domain.model.{TravelZones, ZoneI, ZoneII}
+import org.scalatest.{FunSpec, Matchers}
 
 class TravelTimeTest extends FunSpec with Matchers {
   describe("TravelTime") {

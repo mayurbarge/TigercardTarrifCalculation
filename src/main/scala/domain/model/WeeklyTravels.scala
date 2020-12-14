@@ -1,8 +1,8 @@
-package domain
+package domain.model
 
 import datetime.TravelTime
+import scalaz.Monoid
 import scalaz.Scalaz._
-import scalaz.{Monoid, _}
 
 case class WeeklyTravels(travels: List[TravelTime])
 object WeeklyTravels {

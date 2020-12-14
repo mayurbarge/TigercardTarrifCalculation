@@ -2,9 +2,8 @@ package datetime
 
 import java.time.{DayOfWeek, LocalTime}
 
+import domain.model.{TravelZones, ZoneI}
 import scalaz.Scalaz._
-import scalaz.{ValidationNel, _}
-import domain.{TravelZones, ZoneI, ZoneID}
 import validations.Validator
 import validations.Validator.Result
 
