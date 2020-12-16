@@ -1,17 +1,16 @@
-journey may begin in peak hour end in non-peak, similarly it may begin in non-peak and end in peak
+1. Journey may begin in peak hour end in non-peak, similarly it may begin in non-peak and end in peak
 what rates should be applied
+2. Week end logic is undefined, what if person travels on Week1 Monday, and directly on Week2 Tuesday
+3. There is no mention of currencies in amounts, do we support any specific currency/currencies ?
+4. Timezones are not specified, as of now assumption is local time is used.
+5. Logic for first three rides, is it irrespective of any zone to any or once zonewise interzone/intrazone three rides are done ?
+i.e. irrespective of zone - e.g. first ride from zone1 to zone1, secnod from zone1 to zone1, third from zone3 to zone3. On next ride cap would be applied
+OR
+first,second ride from zone1 to zone1, third from zone2 to zone3, fourth from zone1 to zone1
+now three rides for zone1 to zone1 travel are done, cap is applicable for next one
 
-week end logic is undefined, what if person travels on Week1 Monday, and directly on Week2 Tuesday
 Assuptions
 card can be recharged and at each trip it is debited
-what about amount, currencies
-Timezones are not provided
-logic for first three rides, is it irrespective of any zone to any or once interzone/intrazone three rides are done
 
-    Regarding 5th point, the logic says caps are applicable after the first three rides, though rides are independent of zones or not is not clear.
-    As can be seen from example1
-    Monday 19:00 1 2 calculated fare 5------- Here from zone 1 to 2 this is the first ride and still capping is applicable.
-    I just need some clarification around that.
 
-There is no logic that cap is applicable after the first three rides only. The cap that is applicable for a day is based on the farthest journey in a day. For example, if a few journeys are within zone 1 and a single journey is between zone 1 & 2 or vice versa, then the daily cap applicable will be the one for zone 1 - 2
 

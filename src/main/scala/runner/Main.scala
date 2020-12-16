@@ -10,7 +10,7 @@ import validations.Validator.Result
 object Main extends App {
   val validatedTravelTimes = {
     for {
-      inputLines <- Reader.read("resources/input2.txt")
+      inputLines <- Reader.read("resources/input3.txt")
       input <- inputLines.toList
     } yield {
       TravelTime(input.split(" ").toList)

@@ -4,8 +4,11 @@ import datetime.TravelTime
 import domain.services.FareCalculationService
 import scalaz.Scalaz._
 import scalaz.{Monoid, State}
+import sun.jvm.hotspot.debugger.cdbg.basic.BasicCDebugInfoDataBase
 
 case class CardState(countMap: Map[TravelZones,  Int], fareMap: Map[TravelZones,  BigDecimal])
+
+
 object CardState {
   def changeDailyState(rides: List[TravelTime]): State[CardState, CardState] = {
     for {
@@ -35,9 +38,9 @@ object CardState {
 
         val cappedFares = withoutCaps.fareMap.foldLeft(Map.empty[TravelZones, BigDecimal])((acc, e)=>{
          val (zone, fare) = e
-         if(cap < fare) {
-           acc + (zone -> cap)
-         } else acc + (zone -> fare)
+         if(acc.values.sum + fare < cap) {
+           acc + (zone -> fare)
+         } else acc + (zone -> (cap-acc.values.sum))
        })
         withoutCaps.copy(fareMap = cappedFares)
       })
