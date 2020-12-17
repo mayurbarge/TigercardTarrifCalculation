@@ -9,9 +9,9 @@ class CardStateTest extends FunSpec with Matchers {
   describe("CardState") {
     describe("monoid") {
       it("should combine two card states") {
-        val expectedState = CardState(Map(TravelZones(ZoneI,ZoneII) -> 2), Map(TravelZones(ZoneI,ZoneII) -> BigDecimal(36)))
-        val result = CardState.monoid.append(CardState(Map(TravelZones(ZoneI, ZoneII) -> 1), Map(TravelZones(ZoneI, ZoneII) -> BigDecimal(12))),
-          CardState(Map(TravelZones(ZoneI,ZoneII) -> 1), Map(TravelZones(ZoneI,ZoneII) -> BigDecimal(24))))
+        val expectedState = CardState(Map(TravelZones(ZoneI,ZoneII) -> BigDecimal(36)))
+        val result = CardState.monoid.append(CardState(Map(TravelZones(ZoneI, ZoneII) -> BigDecimal(12))),
+          CardState(Map(TravelZones(ZoneI,ZoneII) -> BigDecimal(24))))
 
         result shouldBe expectedState
       }
@@ -22,8 +22,7 @@ class CardStateTest extends FunSpec with Matchers {
         val rides = List(TravelTime(DayOfWeek.THURSDAY, LocalTime.of(19,0), TravelZones(ZoneI, ZoneII)),
           TravelTime(DayOfWeek.THURSDAY, LocalTime.of(19,0), TravelZones(ZoneI, ZoneII)))
 
-        val state = CardState.changeDailyState(rides).run(CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
-        state.countMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 13)
+        val state = CardState.changeDailyState(rides).run(CardState(Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
         state.fareMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 93)
       }
 
@@ -33,8 +32,7 @@ class CardStateTest extends FunSpec with Matchers {
           TravelTime(DayOfWeek.THURSDAY, LocalTime.of(19,0), TravelZones(ZoneI, ZoneII)),
           TravelTime(DayOfWeek.THURSDAY, LocalTime.of(19,0), TravelZones(ZoneI, ZoneII)))
 
-        val state = CardState.changeDailyState(rides).run(CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
-        state.countMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 15)
+        val state = CardState.changeDailyState(rides).run(CardState(Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
         state.fareMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 120)
       }
     }
@@ -42,25 +40,23 @@ class CardStateTest extends FunSpec with Matchers {
     describe("Weekly state") {
       it("should update weekly state by combining the daily states") {
         val dailyStates = List(
-          CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-          CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 240)))
+          CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+          CardState(Map(TravelZones(ZoneI, ZoneII) -> 240)))
 
-        val state = CardState.changeWeeklyState(dailyStates).run(CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
-        state.countMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 33)
+        val state = CardState.changeWeeklyState(dailyStates).run(CardState( Map(TravelZones(ZoneI, ZoneII) -> 23)))._1
         state.fareMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 383)
       }
 
       it("should cap the fares for weekly travels") {
         val dailyStates = List(
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)),
-        CardState(Map(TravelZones(ZoneI, ZoneII) -> 11), Map(TravelZones(ZoneI, ZoneII) -> 120)))
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)),
+        CardState(Map(TravelZones(ZoneI, ZoneII) -> 120)))
 
-        val state = CardState.changeWeeklyState(dailyStates).run(CardState(Map.empty, Map.empty))._1
-        state.countMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 66)
+        val state = CardState.changeWeeklyState(dailyStates).run(CardState(Map.empty))._1
         state.fareMap shouldBe Map(TravelZones(ZoneI, ZoneII) -> 600)
       }
     }

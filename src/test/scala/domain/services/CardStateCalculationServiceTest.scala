@@ -24,10 +24,8 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
         )
         val result = CardStateCalculationService.dailyStates(weeklyTravels)
         val expectedResult = List(
-          List(CardState(Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 3, TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 1, TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 1),
-            Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 80.0, TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 35.0, TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 5.0))),
-          List(CardState(Map(TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 1), Map(TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 35.0)),
-            CardState(Map(TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 1), Map(TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 30.0))))
+          List(CardState(Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 80.0, TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 35.0, TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 5.0))),
+          List(CardState(Map(TravelZones(ZoneII, ZoneI, ZoneIIToZoneI) -> 35.0)), CardState(Map(TravelZones(ZoneI, ZoneII, ZoneIToZoneII) -> 30.0))))
 
         expectedResult.head should contain theSameElementsAs (expectedResult.head)
         expectedResult.last should contain theSameElementsAs (expectedResult.last)
@@ -47,9 +45,8 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
         val result = CardStateCalculationService.dailyStates(weeklyTravels)
         val expectedResult =
           List(
-            List(CardState(Map(TravelZones(ZoneI,ZoneI,ZoneIToZoneI) -> 4),Map(TravelZones(ZoneI,ZoneI,ZoneIToZoneI) -> 100.0))),
-            List(CardState(Map(TravelZones(ZoneI,ZoneII,ZoneIToZoneII) -> 1),Map(TravelZones(ZoneI,ZoneII,ZoneIToZoneII) -> 30.0)),
-              CardState(Map(TravelZones(ZoneII,ZoneI,ZoneIIToZoneI) -> 1),Map(TravelZones(ZoneII,ZoneI,ZoneIIToZoneI) -> 35.0))))
+            List(CardState(Map(TravelZones(ZoneI,ZoneI,ZoneIToZoneI) -> 100.0))),
+            List(CardState(Map(TravelZones(ZoneI,ZoneII,ZoneIToZoneII) -> 30.0)), CardState(Map(TravelZones(ZoneII,ZoneI,ZoneIIToZoneI) -> 35.0))))
         expectedResult.head should contain theSameElementsAs (expectedResult.head)
         expectedResult.last should contain theSameElementsAs (expectedResult.last)
       }
@@ -63,7 +60,7 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
           ))
         )
         val result = CardStateCalculationService.dailyStates(weeklyTravels)
-        val expectedResult = List(List(CardState(Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 4),Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 80.0))))
+        val expectedResult = List(List(CardState(Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 80.0))))
         expectedResult.head should contain theSameElementsAs (expectedResult.head)
       }
     }
@@ -71,30 +68,30 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
       it("should cap weekly fares for ZoneI to ZoneII travels") {
         val travelZones = TravelZones(ZoneI, ZoneII, ZoneIToZoneII)
         val dailyTravelStates = List(
-          List.fill(7)(CardState(Map(travelZones -> 4), Map(travelZones -> 120.0))),
-          List(CardState(Map(travelZones -> 1),Map(travelZones -> 100.0)))
+          List.fill(7)(CardState(Map(travelZones -> 120.0))),
+          List(CardState(Map(travelZones -> 100.0)))
         )
         val result  = CardStateCalculationService.weeklyStates(dailyTravelStates).map(_.run(CardState.monoid.zero)._1)
         val expectedStates = List(
-          CardState(Map(travelZones -> 28),Map(travelZones -> 600.0)),
-          CardState(Map(travelZones -> 1),Map(travelZones -> 100.0))
+          CardState(Map(travelZones -> 600.0)),
+          CardState(Map(travelZones -> 100.0))
         )
         result should contain theSameElementsAs expectedStates
       }
 
       it("should cap weekly fares for ZoneII to ZoneII travels") {
         val travelZones = TravelZones(ZoneII, ZoneII, ZoneIIToZoneII)
-        val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 4), Map(travelZones -> 80.0))))
+        val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 80.0))))
         val result  = CardStateCalculationService.weeklyStates(dailyTravelStates).map(_.run(CardState.monoid.zero)._1)
-        val expectedStates = List(CardState(Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 24),Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 400.0)))
+        val expectedStates = List(CardState(Map(TravelZones(ZoneII,ZoneII,ZoneIIToZoneII) -> 400.0)))
         result should contain theSameElementsAs expectedStates
       }
 
       it("should cap weekly fares for ZoneI to ZoneI travels") {
           val travelZones = TravelZones(ZoneI, ZoneI, ZoneIToZoneI)
-          val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 4), Map(travelZones -> 100.0))))
+          val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 100.0))))
           val result = CardStateCalculationService.weeklyStates(dailyTravelStates).map(_.run(CardState.monoid.zero)._1)
-          val expectedStates = List(CardState(Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 24), Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 500.0)))
+          val expectedStates = List(CardState(Map(TravelZones(ZoneI, ZoneI, ZoneIToZoneI) -> 500.0)))
           result should contain theSameElementsAs expectedStates
       }
     }
@@ -102,7 +99,7 @@ class CardStateCalculationServiceTest extends  FunSpec with Matchers {
 
   it("should calculate total fare for the journyes") {
     val travelZones = TravelZones(ZoneI, ZoneI, ZoneIToZoneI)
-    val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 4), Map(travelZones -> 100.0))))
+    val dailyTravelStates = List(List.fill(6)(CardState(Map(travelZones -> 100.0))))
     val result  = CardStateCalculationService.weeklyStates(dailyTravelStates)
     CardStateCalculationService.totalFare(result) should be (500.0)
   }
