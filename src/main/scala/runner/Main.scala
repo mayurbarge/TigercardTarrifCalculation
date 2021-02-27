@@ -8,7 +8,7 @@ import scalaz._
 import validations.Validator.Result
 
 object Main extends App {
-  val validatedTravelTimes = {
+  val validatedTravelTimes: Result[List[TravelTime]] = {
     for {
       inputLines <- Reader.read("resources/input3.txt")
       input <- inputLines.toList
@@ -17,7 +17,7 @@ object Main extends App {
     }
   }.sequence[Result, TravelTime]
 
-  val result = for {
+  val result: Validation[NonEmptyList[String], BigDecimal] = for {
     travelTimes <- validatedTravelTimes
   } yield {
     CardStateCalculationService.run(travelTimes)
